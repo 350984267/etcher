@@ -18,7 +18,8 @@ import CopySvg from '@fortawesome/fontawesome-free/svgs/solid/copy.svg';
 import FileSvg from '@fortawesome/fontawesome-free/svgs/solid/file.svg';
 import LinkSvg from '@fortawesome/fontawesome-free/svgs/solid/link.svg';
 import ExclamationTriangleSvg from '@fortawesome/fontawesome-free/svgs/solid/exclamation-triangle.svg';
-import { sourceDestination, scanner } from 'etcher-sdk';
+import { Drive as DrivelistDrive } from 'drivelist';
+import { sourceDestination } from 'etcher-sdk';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import * as _ from 'lodash';
 import { GPTPartition, MBRPartition } from 'partitioninfo';
@@ -161,44 +162,46 @@ const URLSelector = ({
 				await done(imageURL);
 			}}
 		>
-			<Flex style={{ width: '100%' }} flexDirection="column">
-				<Txt mb="10px" fontSize="24px">
-					Use Image URL
-				</Txt>
-				<Input
-					value={imageURL}
-					placeholder="Enter a valid URL"
-					type="text"
-					onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-						setImageURL(evt.target.value)
-					}
-				/>
-			</Flex>
-			{recentImages.length > 0 && (
-				<Flex flexDirection="column" height="78.6%">
-					<Txt fontSize={18}>Recent</Txt>
-					<ScrollableFlex flexDirection="column">
-						<Card
-							p="10px 15px"
-							rows={recentImages
-								.map((recent) => (
-									<Txt
-										key={recent.href}
-										onClick={() => {
-											setImageURL(recent.href);
-										}}
-										style={{
-											overflowWrap: 'break-word',
-										}}
-									>
-										{recent.pathname.split('/').pop()} - {recent.href}
-									</Txt>
-								))
-								.reverse()}
-						/>
-					</ScrollableFlex>
+			<Flex flexDirection="column">
+				<Flex style={{ width: '100%' }} flexDirection="column">
+					<Txt mb="10px" fontSize="24px">
+						Use Image URL
+					</Txt>
+					<Input
+						value={imageURL}
+						placeholder="Enter a valid URL"
+						type="text"
+						onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
+							setImageURL(evt.target.value)
+						}
+					/>
 				</Flex>
-			)}
+				{recentImages.length > 0 && (
+					<Flex flexDirection="column" height="78.6%">
+						<Txt fontSize={18}>Recent</Txt>
+						<ScrollableFlex flexDirection="column">
+							<Card
+								p="10px 15px"
+								rows={recentImages
+									.map((recent) => (
+										<Txt
+											key={recent.href}
+											onClick={() => {
+												setImageURL(recent.href);
+											}}
+											style={{
+												overflowWrap: 'break-word',
+											}}
+										>
+											{recent.pathname.split('/').pop()} - {recent.href}
+										</Txt>
+									))
+									.reverse()}
+							/>
+						</ScrollableFlex>
+					</Flex>
+				)}
+			</Flex>
 		</Modal>
 	);
 };
@@ -247,7 +250,7 @@ export interface SourceMetadata extends sourceDestination.Metadata {
 	partitions: MBRPartition[] | GPTPartition[];
 	path: string;
 	SourceType: Source;
-	drive?: scanner.adapters.DrivelistDrive;
+	drive?: DrivelistDrive;
 	extension?: string;
 }
 
@@ -326,7 +329,7 @@ export class SourceSelector extends React.Component<
 	}
 
 	private selectSource(
-		selected: string | scanner.adapters.DrivelistDrive,
+		selected: string | DrivelistDrive,
 		SourceType: Source,
 	): { promise: Promise<void>; cancel: () => void } {
 		let cancelled = false;
@@ -370,6 +373,7 @@ export class SourceSelector extends React.Component<
 						}
 						metadata.extension = path.extname(selected).slice(1);
 						metadata.path = selected;
+						metadata.SourceType = SourceType;
 
 						if (!metadata.hasMBR) {
 							analytics.logEvent('Missing partition table', { metadata });
@@ -527,7 +531,7 @@ export class SourceSelector extends React.Component<
 			// noop
 		};
 		image.name = image.description || image.name;
-		const imagePath = image.path || '';
+		const imagePath = image.path || image.displayName || '';
 		const imageBasename = path.basename(image.path || '');
 		const imageName = image.name || '';
 		const imageSize = image.size || '';
@@ -684,7 +688,7 @@ export class SourceSelector extends React.Component<
 								showDriveSelector: false,
 							});
 						}}
-						done={async (drives: scanner.adapters.DrivelistDrive[]) => {
+						done={async (drives: DrivelistDrive[]) => {
 							if (!drives.length) {
 								analytics.logEvent('Drive selector closed');
 								this.setState({
