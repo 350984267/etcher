@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# v1.5.107
+## (2020-08-28)
+
+* Rework system & large drives handling logic [Lorenzo Alberto Maria Ambrosi]
+* Override cached window's zoomFactor [Lorenzo Alberto Maria Ambrosi]
+* Add default export for .svg files [Lorenzo Alberto Maria Ambrosi]
+* Ignore vscode workspace folder [Lorenzo Alberto Maria Ambrosi]
+* Reword macOS Catalina askpass message [Lorenzo Alberto Maria Ambrosi]
+* Add clone-drive workflow [Lorenzo Alberto Maria Ambrosi]
+* Split drive selector from target selector [Lorenzo Alberto Maria Ambrosi]
+* Resize modal to show content appropriately [Lorenzo Alberto Maria Ambrosi]
+
+# v1.5.106
+## (2020-08-27)
+
+* Disable ext partitions trimming on 32 bit windows until it is fixed [Alexis Svinartchouk]
+* Fix opening zip files from servers accepting Range headers [Alexis Svinartchouk]
+
+# v1.5.105
+## (2020-08-25)
+
+* Update etcher-sdk to 4.1.26 [Alexis Svinartchouk]
+* URL selector cancel button cancels ongoing url selection [Alexis Svinartchouk]
+* Spinner for URL selector modal [Alexis Svinartchouk]
+
 # v1.5.104
 ## (2020-08-20)
 
