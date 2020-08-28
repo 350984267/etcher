@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# v1.5.107
+## (2020-08-28)
+
+* Remove all ext2fs built files before rebuilding on windows [Alexis Svinartchouk]
+
 # v1.5.106
 ## (2020-08-27)
 
